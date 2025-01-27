@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   php: 
     build: ./docker/php
@@ -8,3 +7,32 @@ services:
     volumes:
       - ./:/var/www/html
     command: php -S 0.0.0.0:80 -t public
+    networks:
+      - db
+
+  db:
+    image: mysql:5.7
+    ports:
+      - ${DB_PORT:-3306}:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_DATABASE:-cours}
+      MYSQL_USER: ${DB_USER:-user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-pass}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - db
+
+  adminer:
+    image: adminer
+    ports:
+      - ${ADMINER_PORT:-8081}:8080
+    networks:
+      - db
+
+networks:
+  db:
+
+volumes:
+  db_data:
